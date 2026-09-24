@@ -4,7 +4,7 @@ import {
   RESEARCH_SUBMISSION_RESPONSE_DATA_PROPS,
 } from "@/utils/type";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const useCreateResearch = () => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export const useGetAllResearch = () => {
     await schoolControllers
       .getAllResearch()
       .then((res) => {
-        setResearchData(res?.data?.data);
+        setResearchData(res?.data);
       })
       .catch((err) => {
         console.log("error in research response", err);
@@ -44,4 +44,31 @@ export const useGetAllResearch = () => {
   };
 
   return { fetchResearchData, researchData, loading };
+};
+
+export const useGetResearchDetails = (id: number) => {
+  const [loading, setLoading] = useState(false);
+  const [researchDetails, setResearchDetails] =
+    useState<RESEARCH_SUBMISSION_RESPONSE_DATA_PROPS | null>(null);
+
+  const fetchResearchDetails = () => {
+    if (!id) return;
+    setLoading(true);
+    schoolControllers
+      .getResearchDetails(id)
+      .then((res) => {
+        setResearchDetails(res?.data?.data || res?.data || res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("error in fetching research details", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchResearchDetails();
+  }, [id]);
+
+  return { loading, researchDetails, fetchResearchDetails };
 };

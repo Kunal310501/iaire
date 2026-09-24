@@ -18,15 +18,21 @@ import { useEffect, useState } from "react";
 import BeamButton from "@/components/widgets/BeamButton";
 
 interface INNOVATIONFORMPROPS {
-  formik: FormikProps<INNOVATION_FORM_PROPS>;
+  formik: FormikProps<any>;
   submitLoading?: boolean;
   hideTeam?: boolean;
+  existingFileName?: string | null;
+  existingFileUrl?: string | null;
+  onRemoveExistingFile?: () => void;
 }
 
 const InnovationForm = ({
   formik,
   submitLoading,
   hideTeam,
+  existingFileName,
+  existingFileUrl,
+  onRemoveExistingFile,
 }: INNOVATIONFORMPROPS) => {
   const { teamData, fetchData, loading: teamLoading } = useGetTeam();
   const [dragActive, setDragActive] = useState(false);
@@ -50,7 +56,9 @@ const InnovationForm = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.title && Boolean(formik.errors.title)}
-              helperText={formik.touched.title && formik.errors.title}
+              helperText={
+                formik.touched.title && (formik.errors.title as string)
+              }
             />
           </Grid>
           {!hideTeam && (
@@ -116,7 +124,7 @@ const InnovationForm = ({
               }
               helperText={
                 formik.touched.problemDescription &&
-                formik.errors.problemDescription
+                (formik.errors.problemDescription as string)
               }
             />
           </Grid>
@@ -136,7 +144,7 @@ const InnovationForm = ({
               }
               helperText={
                 formik.touched.solutionDescription &&
-                formik.errors.solutionDescription
+                (formik.errors.solutionDescription as string)
               }
             />
           </Grid>
@@ -197,7 +205,7 @@ const InnovationForm = ({
                   }
                 }}
               />
-              {!formik.values.file ? (
+              {!formik.values.file && !existingFileName ? (
                 <label
                   htmlFor="template-upload"
                   style={{ cursor: "pointer", display: "block" }}
@@ -251,6 +259,11 @@ const InnovationForm = ({
                     bgcolor: "rgba(248, 93, 0, 0.04)",
                     border: "1px solid rgba(248, 93, 0, 0.1)",
                   }}
+                  onClick={() => {
+                    if (!formik.values.file && existingFileUrl) {
+                      window.open(existingFileUrl, "_blank");
+                    }
+                  }}
                 >
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Box
@@ -280,7 +293,9 @@ const InnovationForm = ({
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {formik.values.file.name}
+                        {formik.values.file
+                          ? formik.values.file.name
+                          : existingFileName}
                       </Typography>
                       <Typography
                         sx={{
@@ -289,15 +304,20 @@ const InnovationForm = ({
                           color: "text.secondary",
                         }}
                       >
-                        {(formik.values.file.size / (1024 * 1024)).toFixed(2)}{" "}
-                        MB
+                        {formik.values.file
+                          ? `${(formik.values.file.size / (1024 * 1024)).toFixed(2)} MB`
+                          : "Uploaded Template"}
                       </Typography>
                     </Box>
                   </Stack>
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      formik.setFieldValue("file", null);
+                      if (formik.values.file) {
+                        formik.setFieldValue("file", null);
+                      } else if (onRemoveExistingFile) {
+                        onRemoveExistingFile();
+                      }
                     }}
                     sx={{
                       color: "#EF4444",
@@ -344,7 +364,7 @@ const InnovationForm = ({
                 {submitLoading ? (
                   <CircularProgress size={24} sx={{ color: COLORS.WHITE }} />
                 ) : (
-                  "Add Innovation"
+                  "Edit Innovation"
                 )}
               </BeamButton>
               <BeamButton

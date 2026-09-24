@@ -717,6 +717,7 @@ export interface USER_DETAILS_RESPONSE {
   motherPhone?: string | null;
   motherProfession?: string | null;
   tierProgressDetails?: TIER_PROGRESS_DETAILS;
+  tierProgress?: number;
   school?: {
     id?: number;
     name?: string;

@@ -45,6 +45,47 @@ export const useCreateStudentInnovation = () => {
   return { loading, createStudentInnovation };
 };
 
+export const useUpdateStudentInnovation = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { setSnackbar } = useSnackbar();
+
+  const updateStudentInnovation = async (id: number, data: any, isDraft: boolean) => {
+    setLoading(true);
+
+    const payload: any = {
+      title: data.title,
+      problemDescription: data.problemDescription,
+      solution: data.solutionDescription,
+    };
+
+    if (data.file) {
+      payload.attorneyFinalTemplate = data.file;
+    }
+
+    if (isDraft) {
+      payload.isDraft = true;
+    }
+
+    try {
+      const res = await schoolControllers.updateInnovation(id, payload);
+      setSnackbar(
+        res?.message || "Innovation updated successfully!",
+        "success",
+      );
+      router.back();
+    } catch (err: any) {
+      console.log("Error updating student innovation:", err);
+      const errMsg = err?.response?.data?.message || "Something went wrong";
+      setSnackbar(errMsg, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { loading, updateStudentInnovation };
+};
+
 export const useCreateInnovation = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();

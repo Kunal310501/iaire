@@ -2,16 +2,17 @@
 import React from "react";
 import { Drawer, Stack, Typography, Divider, Box, Chip} from "@mui/material";
 import { montserrat } from "@/utils/fonts";
-import { COLORS } from "@/utils/enum";
+import { COLORS, SUPPORT_TICKET_STATUS } from "@/utils/enum";
 import moment from "moment";
 import BeamButton from "@/components/widgets/BeamButton";
 
 export interface Ticket {
   id: string;
+  displayId?: string;
   subject: string;
   category: string;
   priority: "LOW" | "MEDIUM" | "HIGH";
-  status: "OPEN" | "IN_PROGRESS" | "RESOLVED";
+  status: SUPPORT_TICKET_STATUS;
   description: string;
   createdAt: string;
 }
@@ -124,15 +125,23 @@ const TicketDetailsDrawer = ({ ticket, open, onClose }: TicketDetailsDrawerProps
                     fontWeight: 700,
                     borderRadius: "6px",
                     fontSize: "12px",
-                    ...(ticket.status === "OPEN" && {
+                    ...(ticket.status === SUPPORT_TICKET_STATUS.OPEN && {
                       bgcolor: "#EFF6FF",
                       color: "#3B82F6",
                     }),
-                    ...(ticket.status === "IN_PROGRESS" && {
+                    ...(ticket.status === SUPPORT_TICKET_STATUS.IN_PROGRESS && {
                       bgcolor: "#FFFBEB",
                       color: "#F59E0B",
                     }),
-                    ...(ticket.status === "RESOLVED" && {
+                    ...(ticket.status === SUPPORT_TICKET_STATUS.RESOLVED && {
+                      bgcolor: "#ECFDF5",
+                      color: "#10B981",
+                    }),
+                    ...(ticket.status === SUPPORT_TICKET_STATUS.CLOSED && {
+                      bgcolor: "#ECFDF5",
+                      color: "#10B981",
+                    }),
+                    ...(ticket.status === SUPPORT_TICKET_STATUS.REOPENED && {
                       bgcolor: "#ECFDF5",
                       color: "#10B981",
                     }),

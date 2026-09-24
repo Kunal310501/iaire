@@ -200,6 +200,15 @@ export const addEducatorInnovationValidationSchema = Yup.object({
   file: Yup.mixed().nullable().required("Template file is required"),
 });
 
+export const editEducatorInnovationValidationSchema = Yup.object({
+  title: Yup.string().required("Innovation Title is required"),
+  problemDescription: Yup.string().required("Problem Description is required"),
+  solutionDescription: Yup.string().required(
+    "Solution Description is required",
+  ),
+  file: Yup.mixed().nullable(),
+});
+
 export const addResearchValidationSchema = Yup.object({
   title: Yup.string().required("Research title is required"),
   topic: Yup.string().required("Topic is required"),

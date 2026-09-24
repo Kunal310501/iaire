@@ -41,42 +41,26 @@ const MembershipManagement = () => {
     (v: any) => v.membership?.status === USER_STATUS.ACTIVE.toUpperCase(),
   );
 
-  let currentTier = "Student Member";
-  let nextTier = "Student Innovation Scholar";
-  let nextTierProgress = 0;
-
-  // Requirements Met Flags
-  const reqTrainingCompleted = true; // Mocked as completed for active student
-  const reqHasInnovation = numInnovations >= 1;
-  const reqHasResearch = numResearch >= 1;
-  const reqScholarMet = reqHasInnovation || reqHasResearch;
-
-  const reqFellowMentor = numInnovations >= 2 || numResearch >= 2;
-  const reqFellowTeamMentored = numInnovations >= 3 || numResearch >= 3;
-
-  if (reqScholarMet) {
-    if (reqFellowMentor && reqFellowTeamMentored) {
-      currentTier = "Fellow of Innovation or Research";
-      nextTier = "Fellow Student of Innovation or Research";
-      nextTierProgress = 60; // Progress towards highest student fellowship
-    } else {
-      currentTier = "Student Innovation Scholar";
-      nextTier = "Fellow of Innovation or Research";
-      let progress = 20; // completed scholar level
-      if (reqFellowMentor) progress += 40;
-      if (reqFellowTeamMentored) progress += 40;
-      nextTierProgress = progress;
+  const currentTier = studentData?.membershipTier
+    ? studentData.membershipTier.split('_').map((word: string) => word.charAt(0) + word.slice(1).toLowerCase()).join(' ')
+    : "Student Member";
+    
+  const tierProgressDetails = studentData?.role ? studentData?.tierProgressDetails?.[studentData.role as string] || [] : [];
+  
+  let nextTier = "Max Tier Reached";
+  let nextTierRequirements: any[] = [];
+  if (tierProgressDetails.length > 0) {
+    for (const tier of tierProgressDetails) {
+      const isMet = (!tier.requirements || tier.requirements.length === 0) || tier.requirements.every((req: any) => req.current >= req.required);
+      if (!isMet) {
+        nextTier = tier.membershipTier.split('_').map((word: string) => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
+        nextTierRequirements = tier.requirements || [];
+        break;
+      }
     }
-  } else {
-    currentTier = "Student Member";
-    nextTier = "Student Innovation Scholar";
-    // scholar needs training + (1 innovation OR 1 research)
-    let progress = 50; // training is done
-    if (reqHasInnovation || reqHasResearch) {
-      progress += 50;
-    }
-    nextTierProgress = progress;
   }
+
+  const nextTierProgress = studentData?.tierProgress || 0;
 
   // Certificate Download Generator via Canvas API
   const handleDownloadCertificate = () => {
@@ -276,10 +260,8 @@ const MembershipManagement = () => {
         currentTier={currentTier}
         nextTier={nextTier}
         nextTierProgress={nextTierProgress}
-        numInnovations={numInnovations}
-        numResearch={numResearch}
-        reqScholarMet={reqScholarMet}
-        reqFellowMentor={reqFellowMentor}
+        nextTierRequirements={nextTierRequirements}
+        tierProgressDetails={tierProgressDetails}
       />
     </Box>
   );

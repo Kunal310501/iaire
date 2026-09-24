@@ -4,9 +4,10 @@ import { useGetAllInnovation } from "@/hooks/school/useInnovation";
 import { INNOVATION_HEADER, STUDENT_INNOVATION_HEADER } from "@/utils/constant";
 import { COLORS, USER_STATUS, USER_ROLES } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Add, Delete, Edit, Lock } from "@mui/icons-material";
+import { Add, Delete, Edit, Lock, Visibility } from "@mui/icons-material";
 import {
   Box,
+  Card,
   Chip,
   CircularProgress,
   IconButton,
@@ -50,7 +51,7 @@ const InnovationList = () => {
 
   return (
     <Box>
-      <Box>
+      <Card sx={{ p: 2 }}>
         <Stack
           direction={"row"}
           alignItems={"center"}
@@ -183,6 +184,7 @@ const InnovationList = () => {
                     key={item.id || index}
                     sx={{
                       "& td": { borderBottom: "1px solid #F3F4F6", py: 2.5 },
+                      textDecoration: "none",
                     }}
                     hover
                   >
@@ -196,23 +198,17 @@ const InnovationList = () => {
                       {item.displayId || item.id}
                     </TableCell>
                     <TableCell>
-                      <Link
-                        href={`/dashboard/student/innovation-management/innovation-details/${item.id}`}
-                        style={{ textDecoration: "none", color: "inherit" }}
+                      <Typography
+                        sx={{
+                          color: COLORS.PRIMARY_NAVY,
+                          fontWeight: 700,
+                          fontSize: 14,
+                          fontFamily: roboto.style.fontFamily,
+                          cursor: "pointer",
+                        }}
                       >
-                        <Typography
-                          sx={{
-                            color: COLORS.PRIMARY_NAVY,
-                            fontWeight: 700,
-                            fontSize: 14,
-                            textDecoration: "underline",
-                            fontFamily: roboto.style.fontFamily,
-                            cursor: "pointer",
-                          }}
-                        >
-                          {item.title}
-                        </Typography>
-                      </Link>
+                        {item.title}
+                      </Typography>
                     </TableCell>
 
                     <TableCell>
@@ -228,35 +224,27 @@ const InnovationList = () => {
                           textTransform: "uppercase",
                           bgcolor: "#E5E7EB",
                           color: "#374151",
-                          ...(item.status?.toUpperCase() ===
-                            USER_STATUS.ACTIVE && {
-                            bgcolor: "#ECFDF5",
-                            color: "#10B981",
-                          }),
-                          ...(item.status?.toUpperCase() ===
-                            USER_STATUS.PENDING && {
-                            bgcolor: "#FFFBEB",
-                            color: "#F59E0B",
-                          }),
-                          ...(item.status?.toUpperCase() ===
-                            USER_STATUS.INACTIVE && {
-                            bgcolor: "#FEF2F2",
-                            color: "#EF4444",
-                          }),
-                          ...(item.status?.toUpperCase() ===
-                            USER_STATUS.BANNED && {
-                            bgcolor: "#F9FAFB",
-                            color: "#6B7280",
-                          }),
                         }}
                       />
                     </TableCell>
                     <TableCell>
-                      <IconButton>
+                      <IconButton
+                        LinkComponent={Link}
+                        href={`/dashboard/student/innovation-management/edit-innovation/${item.id}`}
+                      >
                         <Edit fontSize="small" sx={{ color: COLORS.BLACK }} />
                       </IconButton>
-                      <IconButton>
+                      {/* <IconButton>
                         <Delete fontSize="small" sx={{ color: COLORS.BLACK }} />
+                      </IconButton> */}
+                      <IconButton
+                        LinkComponent={Link}
+                        href={`/dashboard/student/innovation-management/innovation-details/${item.id}`}
+                      >
+                        <Visibility
+                          fontSize="small"
+                          sx={{ color: COLORS.BLACK }}
+                        />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -275,7 +263,7 @@ const InnovationList = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Box>
+      </Card>
     </Box>
   );
 };

@@ -19,24 +19,33 @@ import { roboto, montserrat } from "@/utils/fonts";
 import { COLORS } from "@/utils/enum";
 import { glassCardStyle, goldGradient, glassBorder } from "./styles";
 
+const formatTierName = (tier: string) => {
+  if (!tier) return "Student Member";
+  return tier.split('_').map((word: string) => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
+};
+
+const getTierIcon = (tierStr: string) => {
+  if (!tierStr) return <School />;
+  if (tierStr.includes("SCHOLAR") || tierStr.includes("ASSOCIATE")) return <AutoStories />;
+  if (tierStr.includes("FELLOW") && tierStr.includes("STUDENT")) return <MilitaryTech />;
+  if (tierStr.includes("FELLOW")) return <Lightbulb />;
+  return <School />;
+};
+
 interface UpgradeMembershipProps {
   currentTier: string;
   nextTier: string;
   nextTierProgress: number;
-  numInnovations: number;
-  numResearch: number;
-  reqScholarMet: boolean;
-  reqFellowMentor: boolean;
+  nextTierRequirements: any[];
+  tierProgressDetails: any[];
 }
 
 const UpgradeMembership: React.FC<UpgradeMembershipProps> = ({
   currentTier,
   nextTier,
   nextTierProgress,
-  numInnovations,
-  numResearch,
-  reqScholarMet,
-  reqFellowMentor,
+  nextTierRequirements,
+  tierProgressDetails,
 }) => {
   return (
     <Box sx={{ mt: 3 }}>
@@ -167,96 +176,61 @@ const UpgradeMembership: React.FC<UpgradeMembershipProps> = ({
             </Typography>
 
             <Stack spacing={3}>
-              <Box>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  sx={{ mb: 1 }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 700,
-                      fontFamily: montserrat.style.fontFamily,
-                    }}
-                  >
-                    Innovation Records ({numInnovations} / 1 Submitted)
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 800,
-                      color: numInnovations >= 1 ? "#10B981" : "#6B7280",
-                    }}
-                  >
-                    {numInnovations >= 1 ? "Requirement Met" : "1 Required"}
-                  </Typography>
-                </Stack>
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: 6,
-                    borderRadius: 3,
-                    bgcolor: "#E5E7EB",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: `${Math.min(numInnovations * 100, 100)}%`,
-                      height: "100%",
-                      background:
-                        numInnovations >= 1 ? goldGradient : "#E5E7EB",
-                      borderRadius: 3,
-                    }}
-                  />
-                </Box>
-              </Box>
-
-              <Box>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  sx={{ mb: 1 }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 700,
-                      fontFamily: montserrat.style.fontFamily,
-                    }}
-                  >
-                    Research Records ({numResearch} / 1 Submitted)
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 800,
-                      color: numResearch >= 1 ? "#10B981" : "#6B7280",
-                    }}
-                  >
-                    {numResearch >= 1 ? "Requirement Met" : "1 Required"}
-                  </Typography>
-                </Stack>
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: 6,
-                    borderRadius: 3,
-                    bgcolor: "#E5E7EB",
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: `${Math.min(numResearch * 100, 100)}%`,
-                      height: "100%",
-                      background: numResearch >= 1 ? goldGradient : "#E5E7EB",
-                      borderRadius: 3,
-                    }}
-                  />
-                </Box>
-              </Box>
+              {nextTierRequirements.length > 0 ? (
+                nextTierRequirements.map((req: any, idx: number) => {
+                  const isReqMet = req.current >= req.required;
+                  return (
+                    <Box key={idx}>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        sx={{ mb: 1 }}
+                      >
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 700,
+                            fontFamily: montserrat.style.fontFamily,
+                          }}
+                        >
+                          {req.description} ({req.current} / {req.required} Submitted)
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 800,
+                            color: isReqMet ? "#10B981" : "#6B7280",
+                          }}
+                        >
+                          {isReqMet ? "Requirement Met" : `${req.required} Required`}
+                        </Typography>
+                      </Stack>
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: 6,
+                          borderRadius: 3,
+                          bgcolor: "#E5E7EB",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: `${Math.min((req.current / req.required) * 100, 100)}%`,
+                            height: "100%",
+                            background: isReqMet ? goldGradient : "#E5E7EB",
+                            borderRadius: 3,
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                  );
+                })
+              ) : (
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  You have reached the maximum tier or no specific requirements for the next tier.
+                </Typography>
+              )}
             </Stack>
           </Grid>
         </Grid>
@@ -278,172 +252,132 @@ const UpgradeMembership: React.FC<UpgradeMembershipProps> = ({
       </Typography>
 
       <Stack spacing={4} sx={{ position: "relative", px: { xs: 1, md: 3 } }}>
-        {[
-          {
-            tier: "Tier 1: Student Member",
-            desc: "Entry-level designation conferred upon students admitted to the Academy; eligible to participate in Academy-approved programs, competitions, mentorship initiatives, training modules, and research or innovation activities.",
-            criteria: [
-              "Admitted to the Academy",
-              "Access to Academy basic resources",
-            ],
-            met: true,
-            icon: <School />,
-          },
-          {
-            tier: "Tier 2 & 3: Student Scholar / Associate",
-            desc: "Demonstrate competencies prescribed under the published Standards of the Academy through training completion and patent-pending innovations or journal research papers.",
-            criteria: [
-              "Successfully complete Academy-approved training pathway",
-              "At least one (1) patent-pending innovation OR one (1) accepted research paper",
-            ],
-            met: reqScholarMet,
-            icon: <AutoStories />,
-          },
-          {
-            tier: "Tier 4: Fellow of Innovation or Research",
-            desc: "Sustained achievement, leadership, and mentorship capability. Guide student teams in developing inventions and papers.",
-            criteria: [
-              "Serve as Assistant Mentor, peer mentor, or student leader",
-              "Mentor at least one (1) student team in developing patent-pending innovation or peer-reviewed research paper",
-            ],
-            met: reqFellowMentor,
-            icon: <Lightbulb />,
-          },
-          {
-            tier: "Tier 5: Fellow Student of Innovation or Research",
-            desc: "The highest student distinction. Requires Associate Fellow status, personal patents/publications, and mentorship of multiple student teams.",
-            criteria: [
-              "Personal achievement of at least one (1) granted patent and/or peer-reviewed publication",
-              "Successful mentorship of at least two (2) student teams",
-              "Development of innovation recognized of outstanding significance by IAIRE",
-            ],
-            met: false,
-            icon: <MilitaryTech />,
-          },
-        ].map((step, idx) => (
-          <Card
-            key={idx}
-            sx={{
-              ...glassCardStyle,
-              p: 3.5,
-              border: step.met
-                ? "1px solid rgba(16, 185, 129, 0.2)"
-                : glassBorder,
-              position: "relative",
-            }}
-          >
-            <Grid container spacing={3} alignItems="flex-start">
-              <Grid
-                size={{ xs: 12, sm: 1 }}
-                sx={{ display: "flex", justifyContent: "center" }}
+        {tierProgressDetails && tierProgressDetails.length > 0 ? (
+          tierProgressDetails.map((step: any, idx: number) => {
+            const isMet = (!step.requirements || step.requirements.length === 0) || step.requirements.every((req: any) => req.current >= req.required);
+            return (
+              <Card
+                key={idx}
+                sx={{
+                  ...glassCardStyle,
+                  p: 3.5,
+                  border: isMet
+                    ? "1px solid rgba(16, 185, 129, 0.2)"
+                    : glassBorder,
+                  position: "relative",
+                }}
               >
-                <Box
-                  sx={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: "18px",
-                    background: step.met
-                      ? goldGradient
-                      : "rgba(0, 0, 0, 0.05)",
-                    color: step.met ? "#fff" : "rgba(0,0,0,0.4)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: step.met
-                      ? "0 8px 20px rgba(223, 186, 115, 0.3)"
-                      : "none",
-                  }}
-                >
-                  {step.icon}
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 11 }}>
-                <Stack spacing={1}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Typography
-                      variant="h6"
+                <Grid container spacing={3} alignItems="flex-start">
+                  <Grid
+                    size={{ xs: 12, sm: 1 }}
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Box
                       sx={{
-                        fontWeight: 800,
-                        fontFamily: roboto.style.fontFamily,
-                        color: COLORS.PRIMARY_NAVY,
+                        width: 52,
+                        height: 52,
+                        borderRadius: "18px",
+                        background: isMet
+                          ? goldGradient
+                          : "rgba(0, 0, 0, 0.05)",
+                        color: isMet ? "#fff" : "rgba(0,0,0,0.4)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: isMet
+                          ? "0 8px 20px rgba(223, 186, 115, 0.3)"
+                          : "none",
                       }}
                     >
-                      {step.tier}
-                    </Typography>
-                    <Chip
-                      label={step.met ? "COMPLETED" : "LOCKED"}
-                      size="small"
-                      color={step.met ? "success" : "default"}
-                      sx={{ fontWeight: 800, fontSize: "10px" }}
-                    />
-                  </Stack>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: "text.secondary",
-                      fontFamily: montserrat.style.fontFamily,
-                      mb: 1,
-                    }}
-                  >
-                    {step.desc}
-                  </Typography>
-
-                  <Box
-                    sx={{ pt: 1, borderTop: "1px dashed rgba(0,0,0,0.06)" }}
-                  >
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        fontWeight: 700,
-                        color: "text.secondary",
-                        mb: 1,
-                        display: "block",
-                      }}
-                    >
-                      CRITERIA CHECKLIST:
-                    </Typography>
+                      {getTierIcon(step.membershipTier)}
+                    </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 11 }}>
                     <Stack spacing={1}>
-                      {step.criteria.map((crit, cIdx) => (
-                        <Stack
-                          key={cIdx}
-                          direction="row"
-                          spacing={1.5}
-                          alignItems="center"
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 800,
+                            fontFamily: roboto.style.fontFamily,
+                            color: COLORS.PRIMARY_NAVY,
+                          }}
                         >
-                          {step.met ? (
-                            <CheckCircle
-                              sx={{ color: "#10B981", fontSize: 16 }}
-                            />
-                          ) : (
-                            <Box
-                              sx={{
-                                width: 14,
-                                height: 14,
-                                borderRadius: "50%",
-                                border: "2px solid rgba(0,0,0,0.2)",
-                              }}
-                            />
-                          )}
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: step.met
-                                ? "text.primary"
-                                : "text.secondary",
-                              fontWeight: 500,
-                            }}
-                          >
-                            {crit}
-                          </Typography>
+                          {formatTierName(step.membershipTier)}
+                        </Typography>
+                        <Chip
+                          label={isMet ? "COMPLETED" : "LOCKED"}
+                          size="small"
+                          color={isMet ? "success" : "default"}
+                          sx={{ fontWeight: 800, fontSize: "10px" }}
+                        />
+                      </Stack>
+
+                      <Box
+                        sx={{ pt: 1, borderTop: "1px dashed rgba(0,0,0,0.06)", mt: 2 }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            fontWeight: 700,
+                            color: "text.secondary",
+                            mb: 1,
+                            display: "block",
+                          }}
+                        >
+                          CRITERIA CHECKLIST:
+                        </Typography>
+                        <Stack spacing={1}>
+                          {step.requirements?.map((req: any, cIdx: number) => {
+                            const reqMet = req.current >= req.required;
+                            return (
+                              <Stack
+                                key={cIdx}
+                                direction="row"
+                                spacing={1.5}
+                                alignItems="center"
+                              >
+                                {reqMet ? (
+                                  <CheckCircle
+                                    sx={{ color: "#10B981", fontSize: 16 }}
+                                  />
+                                ) : (
+                                  <Box
+                                    sx={{
+                                      width: 14,
+                                      height: 14,
+                                      borderRadius: "50%",
+                                      border: "2px solid rgba(0,0,0,0.2)",
+                                    }}
+                                  />
+                                )}
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: reqMet
+                                      ? "text.primary"
+                                      : "text.secondary",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {req.description} ({req.current}/{req.required})
+                                </Typography>
+                              </Stack>
+                            );
+                          })}
                         </Stack>
-                      ))}
+                      </Box>
                     </Stack>
-                  </Box>
-                </Stack>
-              </Grid>
-            </Grid>
-          </Card>
-        ))}
+                  </Grid>
+                </Grid>
+              </Card>
+            );
+          })
+        ) : (
+          <Typography sx={{ textAlign: "center", mt: 2, color: "text.secondary", fontFamily: montserrat.style.fontFamily }}>
+            No tier progress details available.
+          </Typography>
+        )}
       </Stack>
     </Box>
   );

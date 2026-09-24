@@ -163,6 +163,14 @@ export const schoolControllers = {
       throw error;
     }
   },
+  getResearchDetails: async (id: number) => {
+    try {
+      let result = await researchSecuredApi.get(`/${id}`);
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  },
   dashboardAnalytics: async () => {
     try {
       let result = await platformSecuredApi.get("/dashboard/school-admin");
@@ -202,6 +210,32 @@ export const schoolControllers = {
   reportTeacher: async (data: REPORT_MENTOR_PROPS) => {
     try {
       let result = await complaints.post("/create", data);
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateInnovation: async (id: number, data: any) => {
+    try {
+      if (data.attorneyFinalTemplate) {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, value as any);
+          }
+        });
+        const result = await innovationSecuredApi.patch(
+          `/update/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        return result.data;
+      }
+      const result = await innovationSecuredApi.patch(`/update/${id}`, data);
       return result.data;
     } catch (error) {
       throw error;

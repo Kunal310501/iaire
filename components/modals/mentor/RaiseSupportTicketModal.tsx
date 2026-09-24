@@ -16,13 +16,16 @@ import {
   Grid,
   Stack,
   TextField,
-  Typography} from "@mui/material";
+  Typography,
+} from "@mui/material";
 
 interface RaiseSupportTicketModalProps {
   onTicketRaised: () => void;
 }
 
-const RaiseSupportTicketModal = ({ onTicketRaised }: RaiseSupportTicketModalProps) => {
+const RaiseSupportTicketModal = ({
+  onTicketRaised,
+}: RaiseSupportTicketModalProps) => {
   const { hideModal } = useModal();
   const { loading, raiseTicket } = useCreateSupportTicket();
 
@@ -82,14 +85,19 @@ const RaiseSupportTicketModal = ({ onTicketRaised }: RaiseSupportTicketModalProp
             <Autocomplete
               options={CATEGORY_OPTIONS}
               getOptionLabel={(option) => option.label}
-              isOptionEqualToValue={(option, value) => option.value === value.value}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value
+              }
               value={
                 CATEGORY_OPTIONS.find(
                   (option) => option.value === formik.values.category,
                 ) || null
               }
               onChange={(_, newValue) => {
-                formik.setFieldValue("category", newValue ? newValue.value : "");
+                formik.setFieldValue(
+                  "category",
+                  newValue ? newValue.value : "",
+                );
               }}
               onBlur={formik.handleBlur}
               renderInput={(params) => (
@@ -108,14 +116,19 @@ const RaiseSupportTicketModal = ({ onTicketRaised }: RaiseSupportTicketModalProp
             <Autocomplete
               options={PRIORITY_OPTIONS}
               getOptionLabel={(option) => option.label}
-              isOptionEqualToValue={(option, value) => option.value === value.value}
+              isOptionEqualToValue={(option, value) =>
+                option.value === value.value
+              }
               value={
                 PRIORITY_OPTIONS.find(
                   (option) => option.value === formik.values.priority,
                 ) || null
               }
               onChange={(_, newValue) => {
-                formik.setFieldValue("priority", newValue ? newValue.value : "");
+                formik.setFieldValue(
+                  "priority",
+                  newValue ? newValue.value : "",
+                );
               }}
               onBlur={formik.handleBlur}
               renderInput={(params) => (
@@ -143,12 +156,19 @@ const RaiseSupportTicketModal = ({ onTicketRaised }: RaiseSupportTicketModalProp
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.description && !!formik.errors.description}
-              helperText={formik.touched.description && formik.errors.description}
+              helperText={
+                formik.touched.description && formik.errors.description
+              }
             />
           </Grid>
 
           <Grid size={12}>
-            <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 2 }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              justifyContent="flex-end"
+              sx={{ mt: 2 }}
+            >
               <BeamButton
                 onClick={hideModal}
                 disabled={loading}
@@ -176,7 +196,11 @@ const RaiseSupportTicketModal = ({ onTicketRaised }: RaiseSupportTicketModalProp
                   },
                 }}
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : "Submit Ticket"}
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Submit Ticket"
+                )}
               </BeamButton>
             </Stack>
           </Grid>

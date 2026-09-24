@@ -7,19 +7,21 @@ import { useSignup } from "@/store/useSignup";
 import { RESEARCH_HEADER } from "@/utils/constant";
 import { COLORS, USER_ROLES, USER_STATUS } from "@/utils/enum";
 import { roboto } from "@/utils/fonts";
-import { Add, Lock } from "@mui/icons-material";
+import { Add, Lock, Visibility } from "@mui/icons-material";
 import {
   Box,
   Card,
   Chip,
   CircularProgress,
+  IconButton,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow} from "@mui/material";
+  TableRow,
+} from "@mui/material";
 import moment from "moment";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -36,7 +38,8 @@ const ResearchList = () => {
     );
 
   const isPaymentPending = studentData?.payments?.some(
-    (p: any) => p.status === "PENDING" || p.membership?.status === "PAYMENT_PENDING"
+    (p: any) =>
+      p.status === "PENDING" || p.membership?.status === "PAYMENT_PENDING",
   );
 
   const { researchData, fetchResearchData, loading } = useGetAllResearch();
@@ -176,16 +179,24 @@ const ResearchList = () => {
               ) : researchData && researchData.length > 0 ? (
                 researchData.map((item, index) => (
                   <TableRow key={index} hover>
-                    <TableCell sx={{ fontFamily: roboto.style.fontFamily }}>
+                    <TableCell
+                      sx={{ fontFamily: roboto.style.fontFamily, fontSize: 14 }}
+                    >
                       {item.displayId}
                     </TableCell>
-                    <TableCell sx={{ fontFamily: roboto.style.fontFamily }}>
+                    <TableCell
+                      sx={{ fontFamily: roboto.style.fontFamily, fontSize: 14 }}
+                    >
                       {item.title}
                     </TableCell>
-                    <TableCell sx={{ fontFamily: roboto.style.fontFamily }}>
+                    <TableCell
+                      sx={{ fontFamily: roboto.style.fontFamily, fontSize: 14 }}
+                    >
                       {item.topic}
                     </TableCell>
-                    <TableCell sx={{ fontFamily: roboto.style.fontFamily }}>
+                    <TableCell
+                      sx={{ fontFamily: roboto.style.fontFamily, fontSize: 14 }}
+                    >
                       {moment(item.createdAt).format("DD-MMM-YYYY")}
                     </TableCell>
                     <TableCell>
@@ -207,7 +218,8 @@ const ResearchList = () => {
                             bgcolor: "#FFFBEB",
                             color: "#F59E0B",
                           }),
-                          ...(item.status?.toUpperCase() === "NOT_PUBLISHED" && {
+                          ...(item.status?.toUpperCase() ===
+                            "NOT_PUBLISHED" && {
                             bgcolor: "#FEF2F2",
                             color: "#EF4444",
                           }),
@@ -218,8 +230,16 @@ const ResearchList = () => {
                         }}
                       />
                     </TableCell>
-                    <TableCell sx={{ fontFamily: roboto.style.fontFamily }}>
-                      -
+                    <TableCell>
+                      <IconButton
+                        LinkComponent={Link}
+                        href={`/dashboard/student/research-management/research-details/${item.id}`}
+                      >
+                        <Visibility
+                          fontSize="small"
+                          sx={{ color: COLORS.BLACK }}
+                        />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))
