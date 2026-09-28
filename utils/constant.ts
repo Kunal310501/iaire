@@ -2825,3 +2825,11 @@ export const REPORT_CATEGORY = [
     value: "OTHER",
   },
 ];
+
+export const TRAINING_TABLE_NOMINATION_HEADER = [
+  "Name",
+  "Mode",
+  "Start Date",
+  "End Date",
+  // "Actions",
+];

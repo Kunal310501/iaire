@@ -1,28 +1,17 @@
+import TrainingTable from "@/components/layouts/dashboard/educator/components/trainingTable/TrainingTable";
 import { CustomTabPanel } from "@/components/widgets/TabPanels";
 import { useBatches } from "@/hooks/mentor/getBatches";
-import { CATEGORY_TYPES, MODE_TRAINING } from "@/utils/constant";
-import { CATEGORY, COLORS } from "@/utils/enum";
-import { roboto } from "@/utils/fonts";
-import {
-  Box,
-  Card,
-  CardActionArea,
-  Grid,
-  Tab,
-  Tabs,
-  Typography,
-  TextField,
-  Autocomplete,
-} from "@mui/material";
-import moment from "moment";
-import { useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import BeamButton from "@/components/widgets/BeamButton";
 import {
   useSelfNominateTeacher,
   useTrainingList,
 } from "@/hooks/mentor/useNominateTeacher";
+import { CATEGORY_TYPES } from "@/utils/constant";
+import { CATEGORY, COLORS } from "@/utils/enum";
+import { roboto } from "@/utils/fonts";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { useFormik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
 
 const TeacherSelfNomination = ({ batchId }: { batchId?: string }) => {
   const [tabValue, setTabValue] = useState(CATEGORY.INNOVATION);
@@ -38,24 +27,24 @@ const TeacherSelfNomination = ({ batchId }: { batchId?: string }) => {
       trainingMode: null as any,
     },
     enableReinitialize: true,
-    validationSchema: Yup.lazy(() => {
-      const answerShape: any = {};
+    validate: (values) => {
+      const errors: any = {};
       if (selectedBatch?.questions) {
         selectedBatch.questions.forEach((q: any, index: number) => {
-          if (q.required) {
-            const fieldId = q.id || String(index);
-            answerShape[fieldId] = Yup.string().required(
-              "This field is required",
-            );
+          const fieldId = q.id || String(index);
+          if (
+            !values.answers?.[fieldId] ||
+            String(values.answers[fieldId]).trim() === ""
+          ) {
+            if (!errors.answers) {
+              errors.answers = {};
+            }
+            errors.answers[fieldId] = "This field is required";
           }
         });
       }
-      const shape: any = {
-        answers: Yup.object().shape(answerShape),
-      };
-
-      return Yup.object(shape);
-    }),
+      return errors;
+    },
     onSubmit: async (values) => {
       const payload = {
         mode: values.trainingMode?.label,
@@ -83,8 +72,10 @@ const TeacherSelfNomination = ({ batchId }: { batchId?: string }) => {
     formik.resetForm();
   };
 
+  console.log("batchdata", batchData);
+
   return (
-    <Box>
+    <Box sx={{ width: 800 }}>
       <Box>
         <Typography
           sx={{
@@ -112,7 +103,7 @@ const TeacherSelfNomination = ({ batchId }: { batchId?: string }) => {
           ))}
         </Tabs>
 
-        {CATEGORY_TYPES.map((val, i) => (
+        {/* {CATEGORY_TYPES.map((val, i) => (
           <CustomTabPanel index={val} value={tabValue} key={i}>
             <Grid container spacing={2}>
               {batchData
@@ -154,9 +145,9 @@ const TeacherSelfNomination = ({ batchId }: { batchId?: string }) => {
                 ))}
             </Grid>
           </CustomTabPanel>
-        ))}
+        ))} */}
 
-        {selectedBatch && (
+        {/* {selectedBatch && (
           <Box sx={{ mt: 4 }}>
             <Typography
               sx={{
@@ -217,7 +208,19 @@ const TeacherSelfNomination = ({ batchId }: { batchId?: string }) => {
               </Grid>
             </form>
           </Box>
-        )}
+        )} */}
+
+        {CATEGORY_TYPES.map((val, i) => (
+          <CustomTabPanel index={val} value={tabValue} key={i}>
+            <TrainingTable 
+              batchData={batchData} 
+              batchLoading={batchLoading} 
+              formik={formik} 
+              selectedBatch={selectedBatch} 
+              setSelectedBatch={setSelectedBatch} 
+            />
+          </CustomTabPanel>
+        ))}
       </Box>
     </Box>
   );

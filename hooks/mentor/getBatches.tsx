@@ -1,18 +1,24 @@
 import { batchControllers } from "@/app/api/batchControllers";
 import { useModal } from "@/store/useModal";
 import useSnackbar from "@/store/useSnackbar";
+import {
+  TRAINING_BATCH_DATA_PROPS,
+  TRAINING_BATCH_RESPONSE,
+} from "@/utils/type";
 import { useEffect, useState } from "react";
 
 export const useBatches = (category: string) => {
   const [batchLoading, setBatchLoading] = useState(false);
-  const [batchData, setBatchData] = useState<any[]>([]);
+  const [batchData, setBatchData] = useState<TRAINING_BATCH_RESPONSE>();
   useEffect(() => {
     const fetchBatches = async () => {
       setBatchLoading(true);
       batchControllers
         .getAllBatches(category)
         .then((res) => {
-          setBatchData(res.data);
+          // setBatchData(res.data);
+          // console.log("reesss", res);
+          setBatchData(res);
           setBatchLoading(false);
         })
         .catch((err) => {

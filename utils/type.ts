@@ -1416,3 +1416,145 @@ export interface recommendHeadBoyOrGirl {
   id: string;
   category: string;
 }
+
+export interface TRAINING_QUESTION_PROPS {
+  id: string;
+  type: string;
+  options: string[];
+  question: string;
+  required: boolean;
+}
+
+export interface TRAINING_TIER_REQUIREMENT {
+  current: number;
+  required: number;
+  description: string;
+}
+
+export interface TRAINING_TIER_DETAIL {
+  requirements: TRAINING_TIER_REQUIREMENT[];
+  membershipTier: string;
+}
+
+export interface TRAINING_TIER_PROGRESS_DETAILS {
+  TEACHER?: TRAINING_TIER_DETAIL[];
+}
+
+export interface TRAINING_USER {
+  id: number;
+  email: string;
+  username: string;
+  phone: string | null;
+  countryCode: string | null;
+  isdCode: string | null;
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  isBoardAdminManuallyVerfied: boolean;
+  fullName: string | null;
+  firstName: string;
+  lastName: string;
+  bio: string | null;
+  profileImage: string | null;
+  password?: string;
+  hashedRefreshToken?: string | null;
+  lastLoginAt: string | null;
+  tokenVersion: number;
+  role: string;
+  status: string;
+  schoolId: number | null;
+  grade: string | null;
+  state: string | null;
+  dob: string | null;
+  spocDetails: any | null;
+  city: string | null;
+  totalSchools: number | null;
+  totalStudents: number | null;
+  totalTeachers: number | null;
+  noOfStudents: number | null;
+  noOfTeachers: number | null;
+  category: string | null;
+  gender: string | null;
+  approvalStatus: string;
+  isSchoolPay: boolean;
+  primarySubjects: string[];
+  experienceYears: number | null;
+  experienceinYears: number | null;
+  experienceMonths: number | null;
+  fatherName: string | null;
+  fatherEmail: string | null;
+  fatherPhone: string | null;
+  fatherProfession: string | null;
+  motherName: string | null;
+  motherEmail: string | null;
+  motherPhone: string | null;
+  motherProfession: string | null;
+  oldSchoolId: number | null;
+  previousSchoolIds: number[];
+  boardId: number | null;
+  oldBoardId: number | null;
+  previousBoardIds: number[];
+  oldApprovalStatus: string | null;
+  schoolHistory: any[];
+  countryId: number | null;
+  membershipTier: string | null;
+  tierProgress: number;
+  membershipCode: string | null;
+  tierProgressDetails: TRAINING_TIER_PROGRESS_DETAILS | null;
+  approvedAt: string | null;
+  rejectedAt: string | null;
+  rejectReason: string | null;
+  isHead: boolean;
+  headNominationStatus: string | null;
+  headNominationCategory: string | null;
+  headNominationMessage: string | null;
+  headRejectReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface TRAINING_TEACHER_ASSIGNMENT {
+  id: number;
+  batchId: number;
+  teacherId: number;
+  teacher: TRAINING_USER;
+  studentId: number | null;
+  student: any | null;
+  participantRole: string;
+  schoolId: number | null;
+  assignedBy: number;
+  createdAt: string;
+}
+
+export interface TRAINING_BATCH_DATA_PROPS {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  userRole: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  mode: string;
+  isActive: boolean;
+  questions: TRAINING_QUESTION_PROPS[];
+  createdBy: number;
+  createdByUser: TRAINING_USER;
+  teacherAssignments: TRAINING_TEACHER_ASSIGNMENT[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface TRAINING_BATCH_RESPONSE {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: TRAINING_BATCH_DATA_PROPS[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
