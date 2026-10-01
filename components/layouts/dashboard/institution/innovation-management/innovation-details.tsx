@@ -105,7 +105,9 @@ const InnovationDetails = () => {
                 <Grid container spacing={4}>
                   {/* Timeline Card */}
                   <Grid size={{ xs: 12 }}>
-                    <InnovationTimeline status={innovationDetails.status as INNOVATION_STATUS} />
+                    <InnovationTimeline
+                      status={innovationDetails.status as INNOVATION_STATUS}
+                    />
                   </Grid>
 
                   {/* Statements Card */}

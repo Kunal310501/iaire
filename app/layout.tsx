@@ -47,6 +47,7 @@ export const metadata: Metadata = {
 import LayoutWrapper from "@/components/layouts/LayoutWrapper";
 import GlobalSnackbar from "@/components/widgets/GlobalSnackbar";
 import Modal from "@/components/widgets/Modal";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 
 export default function RootLayout({
   children,
@@ -90,13 +91,13 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable}`}
         suppressHydrationWarning
       >
-        {/* <ThemeRegistry> */}
-        <LayoutWrapper>
-          <Modal />
-          <GlobalSnackbar />
-          {children}
-        </LayoutWrapper>
-        {/* </ThemeRegistry> */}
+        <AppRouterCacheProvider>
+          <LayoutWrapper>
+            <Modal />
+            <GlobalSnackbar />
+            {children}
+          </LayoutWrapper>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

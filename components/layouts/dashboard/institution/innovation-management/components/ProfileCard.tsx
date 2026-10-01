@@ -101,7 +101,7 @@ const ProfileCard = ({ innovationDetails }: ProfileCardProps) => {
 
         <Stack direction="row" spacing={1} justifyContent="center" mb={3}>
           <Chip
-            label={innovationDetails.status}
+            label={innovationDetails.status.replace(/_/g, " ")}
             size="small"
             sx={{
               bgcolor:

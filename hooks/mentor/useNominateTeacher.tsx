@@ -50,7 +50,6 @@ export const useGetTrainingDetails = (id: string | number) => {
   return { loading, data, refetch: getDetails };
 };
 
-
 export const useSelfNominateTeacher = (onSuccess?: () => void) => {
   const [loading, setLoading] = useState(false);
   const { hideModal } = useModal();

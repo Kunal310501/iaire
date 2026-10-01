@@ -41,12 +41,11 @@ const NocLayout = () => {
   const handleDownload = async (id: string) => {
     try {
       const res = await downloadNoc(id);
-      // Assuming the API returns a URL in res.data.data or res.data
-      const downloadUrl = res?.data?.data || res?.data;
+      const downloadUrl = res?.data?.data.downloadUrl || res?.data;
       if (typeof downloadUrl === "string" && downloadUrl.startsWith("http")) {
         window.open(downloadUrl, "_blank");
       } else {
-        console.log("Download response:", res);
+        // console.log("Download response:", res);
       }
     } catch (err) {
       console.error("Failed to download NOC", err);

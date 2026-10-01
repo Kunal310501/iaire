@@ -11,7 +11,7 @@ import { useModal } from "@/store/useModal";
 
 import { CATEGORY, COLORS, USER_ROLES } from "@/utils/enum";
 import { aloeveraDisplay_medium, newBlack_medium } from "@/utils/fonts";
-import { BATCH_DETAILS_PROPS } from "@/utils/type";
+import { BATCH_DETAILS_PROPS, TRAINING_BATCH_DATA_PROPS } from "@/utils/type";
 
 import {
   Box,
@@ -72,10 +72,12 @@ const AssignTeachersLayout = () => {
   const { batchData, batchLoading } = useBatches(apiCategory);
   const open = Boolean(anchorEl);
 
-  const visibleBatchData = batchData?.filter((batch: any) => {
-    const lastVisibleDate = moment(batch.startDate).subtract(7, "days");
-    return moment().isSameOrBefore(lastVisibleDate, "day");
-  });
+  const visibleBatchData = batchData?.data?.filter(
+    (batch: TRAINING_BATCH_DATA_PROPS) => {
+      const lastVisibleDate = moment(batch.startDate).subtract(7, "days");
+      return moment().isSameOrBefore(lastVisibleDate, "day");
+    },
+  );
 
   const tableCellSx = {
     fontSize: 13,
@@ -162,7 +164,7 @@ const AssignTeachersLayout = () => {
                         <Atom color={COLORS.PRIMARY_NAVY} size={"small"} />
                       </TableCell>
                     </TableRow>
-                  ) : visibleBatchData?.length > 0 ? (
+                  ) : visibleBatchData && visibleBatchData.length > 0 ? (
                     visibleBatchData.map((batch: any) => (
                       <TableRow key={batch.id}>
                         <TableCell sx={tableCellSx}>{batch.id}</TableCell>

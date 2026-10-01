@@ -9,6 +9,7 @@ import { COLORS } from "@/utils/enum";
 import {
   Box,
   Button,
+  CircularProgress,
   Collapse,
   IconButton,
   TableCell,
@@ -18,6 +19,7 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import React, { useState } from "react";
+import { useSelfNominateTeacher } from "@/hooks/mentor/useNominateTeacher";
 
 const CollapsableTableRow = ({
   item,
@@ -32,6 +34,8 @@ const CollapsableTableRow = ({
 }) => {
   const [open, setOpen] = useState(false);
 
+  const { loading, selfNominateTeacher } = useSelfNominateTeacher();
+
   const handleOpen = () => {
     setOpen(true);
     setSelectedBatch?.(item);
@@ -40,6 +44,10 @@ const CollapsableTableRow = ({
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleNominationTeacher = (id: string | number) => {
+    console.log("id", id);
   };
 
   return (
@@ -76,17 +84,34 @@ const CollapsableTableRow = ({
         <TableCell sx={{ fontFamily: roboto.style.fontFamily, fontSize: 14 }}>
           {moment(item.endDate).format("Do MMM YYYY")}
         </TableCell>
+        {item.questions && item.questions.length < 1 && (
+          <TableCell>
+            <Button
+              sx={{
+                backgroundColor: COLORS.PRIMARY_NAVY,
+                color: COLORS.WHITE,
+                fontSize: 12,
+                fontWeight: 500,
+                textTransform: "none",
+              }}
+              onClick={() => handleNominationTeacher(item?.id)}
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress
+                  sx={{ width: 10, height: 10, color: COLORS.BLACK }}
+                />
+              ) : (
+                "Nominate"
+              )}
+            </Button>
+          </TableCell>
+        )}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1, paddingY: 2 }}>
-              {/* <Typography
-                sx={{ fontFamily: roboto.style.fontFamily, fontSize: 14 }}
-              >
-                {item.description}
-              </Typography> */}
-
               {item?.questions?.map((val: any, i: number) => {
                 const fieldId = val.id || String(i);
                 return (
